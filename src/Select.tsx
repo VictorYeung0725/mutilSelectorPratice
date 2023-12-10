@@ -3,7 +3,8 @@ import styles from './Select.module.css';
 
 type SelectOption = {
   label: string;
-  value: any;
+  // value: any;
+  value: unknown;
 };
 
 type SelectProps = {
@@ -21,6 +22,10 @@ export default function Select({ value, onChange, options }: SelectProps) {
 
   function selectOption(option: SelectOption) {
     onChange(option);
+  }
+
+  function isOptionSelected(option: SelectOption) {
+    return option === value;
   }
 
   return (
@@ -51,7 +56,9 @@ export default function Select({ value, onChange, options }: SelectProps) {
               selectOption(option);
               setIsOpen(false);
             }}
-            className={styles.option}
+            className={`${styles.option} ${
+              isOptionSelected(option) ? styles.selected : ''
+            }`}
             key={option.label}
           >
             {option.label}
