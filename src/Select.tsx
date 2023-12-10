@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Select.module.css';
 
 type SelectOption = {
   label: string;
   // value: any;
-  value: unknown;
+  // value: unknown;
+  value: string | number;
 };
 
 type SelectProps = {
@@ -15,18 +16,23 @@ type SelectProps = {
 
 export default function Select({ value, onChange, options }: SelectProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isHilight, setIsHilight] = useState(0);
 
   function clearOptions() {
     onChange(undefined);
   }
 
   function selectOption(option: SelectOption) {
-    onChange(option);
+    if (option !== value) onChange(option);
   }
 
   function isOptionSelected(option: SelectOption) {
     return option === value;
   }
+
+  useEffect(() => {
+    if (isOpen) setIsHilight(0);
+  }, [isOpen]);
 
   return (
     <div
@@ -49,17 +55,18 @@ export default function Select({ value, onChange, options }: SelectProps) {
       <div className={styles.divider}></div>
       <div className={styles.caret}></div>
       <ul className={`${styles.options} ${isOpen ? styles.show : ''}`}>
-        {options.map((option) => (
+        {options.map((option, index) => (
           <li
             onClick={(e) => {
               e.stopPropagation();
               selectOption(option);
               setIsOpen(false);
             }}
+            key={option.value}
+            onMouseEnter={() => setIsHilight(index)}
             className={`${styles.option} ${
               isOptionSelected(option) ? styles.selected : ''
-            }`}
-            key={option.label}
+            } ${index === isHilight ? styles.highlighted : ''}`}
           >
             {option.label}
           </li>
